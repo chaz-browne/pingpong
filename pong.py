@@ -8,6 +8,9 @@ pygame.display.set_caption("Chaz's Playground: Pong!")
 
 FPS = 60
 
+POWER_VEL = 7
+POWER_RADIUS = 4
+
 PURPLE = (102, 51, 153)
 GRAY = (102, 51, 153)
 WHITE = (255, 255, 255)
@@ -69,8 +72,24 @@ class Ball:
         self.y_vel = 0
         self.x_vel *= -1
 
+class PowerUp:
+    COLOR = BLACK
+    def __init__(self, x, y, radius):
+        self.x = self.original_x = x
+        self.y = self.original_y = y
+        self.radius = radius
+        self.x_vel = 0
+        self.y_vel = POWER_VEL
 
-def draw(win, paddles, ball, left_score, right_score):
+    def draw(self, win):
+        pygame.draw.circle(win, self.COLOR, (self.x, self.y), self.radius)
+        
+    def move(self):
+        self.x += self.x_vel
+        self.y += self.y_vel
+
+
+def draw(win, paddles, ball, powerup, left_score, right_score):
     win.fill(PURPLE)
 
     left_score_text = SCORE_FONT.render(f"{left_score}", 1, WHITE)
@@ -87,6 +106,7 @@ def draw(win, paddles, ball, left_score, right_score):
             continue
         pygame.draw.rect(win, WHITE, (WIDTH//2 - 5, i, 10, HEIGHT//20))
 
+    powerup.draw(win)
     ball.draw(win)
     pygame.display.update()
 
@@ -141,6 +161,8 @@ def main():
     right_paddle = Paddle(WIDTH - 10 - PADDLE_WIDTH, HEIGHT //
                           2 - PADDLE_HEIGHT//2, PADDLE_WIDTH, PADDLE_HEIGHT)
     ball = Ball(WIDTH // 2, HEIGHT // 2, BALL_RADIUS)
+
+    powerup = PowerUp(WIDTH, HEIGHT//2, POWER_RADIUS)
 
     left_score = 0
     right_score = 0
